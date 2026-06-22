@@ -1,46 +1,47 @@
-# from pydantic import BaseModel, ConfigDict
-# from typing import List
-# from datetime import datetime
+# serialization :- converting complex data structures like pydantic model
+# take pydantic & convert in easy(transmitted,stored,processed)like Python dict,JSON strings,XML
+from pydantic import BaseModel, ConfigDict
+from typing import List
+from datetime import datetime
+
+class Address(BaseModel):
+    street: str
+    city: str
+    zip_code: str
+
+class User(BaseModel):
+    id: int
+    name: str
+    email: str
+    is_active: bool = True
+    createdAt: datetime
+    address: Address
+    tags: List[str] = [] #ByDefault Its Empty
+
+    model_config = ConfigDict(
+        json_encoders={datetime: lambda v: v.strftime('%d-%m-%Y %H:%M:%S')}
+    )
 
 
-# class Address(BaseModel):
-#     street: str
-#     city: str
-#     zip_code: str
+user = User(
+    id=1,
+    name="Hitesh",
+    email="h@hitesh.ai",
+    createdAt=datetime(2024, 3, 15, 14, 30,),
+    address=Address(
+        street="Something",
+        city="Jaipur",
+        zip_code="009988"
+    ),
+    is_active=False,
+    tags=["premium", "subscriber"]
+)
 
-# class User(BaseModel):
-#     id: int
-#     name: str
-#     email: str
-#     is_active: bool = True
-#     createdAt: datetime
-#     address: Address
-#     tags: List[str] = []
+python_dict = user.model_dump() #convert in dictionary like key and value
+print(user)
+print("="*30)
+print(python_dict)
 
-#     model_config = ConfigDict(
-#         json_encoders={datetime: lambda v: v.strftime('%d-%m-%Y %H:%M:%S')}
-#     )
-
-
-# user = User(
-#     id=1,
-#     name="Hitesh",
-#     email="h@hitesh.ai",
-#     createdAt=datetime(2024, 3, 15, 14, 30,),
-#     address=Address(
-#         street="Something",
-#         city="Jaipur",
-#         zip_code="009988"
-#     ),
-#     is_active=False,
-#     tags=["premium", "subscriber"]
-# )
-
-# python_dict = user.model_dump()
-# print(user)
-# print("="*30)
-# print(python_dict)
-
-# json_str = user.model_dump_json()
-# print("="*30)
-# print(json_str)
+json_str = user.model_dump_json() #covert everything in JSON
+print("="*30)
+print(json_str)
